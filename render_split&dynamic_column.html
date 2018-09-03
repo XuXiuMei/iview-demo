@@ -54,7 +54,7 @@
                             return h('div', function () {
                                 let arr = [];
 
-                                //父
+                                //父地址
                                 arr.push(
                                     h('p', {
                                         style: {
@@ -64,7 +64,7 @@
                                     }, params.row.address)
                                 );
 
-                                //子
+                                //子地址
                                 if (params.row.subs && params.row.subs.length > 0) {
                                     for (let i = 0; i < params.row.subs.length; ++i) {
                                         arr.push(
