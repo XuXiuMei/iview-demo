@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="description" content="iview table 拆分单元格/动态隐藏/显示列"/>
+    <meta name="keywords" content="iview,table,拆分单元格,动态隐藏,显示列"/>
+    <title>iview table 拆分单元格/动态隐藏/显示列</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/iview/dist/styles/iview.css"/>
+    <script type="text/javascript" src="https://vuejs.org/js/vue.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/iview/dist/iview.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <button type="button" @click.prevent="toggleLastColumn">切换最后一列是否显示</button>
+    <i-table border :columns="columns7" :data="data6"></i-table>
+</div>
+
+<script>
+    let vm = new Vue({
+        el: '#app',
+        data () {
+            return {
+                toggleLastColumnFlag: false,
+                columnsToggle: [
+                    {
+                        title: '最后一列',
+                        key: 'last_column'
+                    }
+                ],
+                columns7: [
+                    {
+                        title: 'Name',
+                        key: 'name',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('Icon', {
+                                    props: {
+                                        type: 'person'
+                                    }
+                                }),
+                                h('strong', params.row.name)
+                            ]);
+                        }
+                    },
+                    {
+                        title: 'Age',
+                        key: 'age'
+                    },
+                    {
+                        title: 'Address',
+                        key: 'address',
+                        render: (h, params) => {
+                            //console.log(params.row)
+                            return h('div', function () {
+                                let arr = [];
+
+                                //父
+                                arr.push(
+                                    h('p', {
+                                        style: {
+                                            height: params.row.subs && params.row.subs.length > 0 ? 100 / (params.row.subs.length + 1) + '%' : '100%',
+                                            border: '3px solid red'
+                                        }
+                                    }, params.row.address)
+                                );
+
+                                //子
+                                if (params.row.subs && params.row.subs.length > 0) {
+                                    for (let i = 0; i < params.row.subs.length; ++i) {
+                                        arr.push(
+                                            h('p', {
+                                                style: {
+                                                    height: 100 / (params.row.subs.length + 1) + '%',
+                                                    border: '3px solid green',
+                                                    'margin-top': '1px'
+                                                }
+                                            }, params.row.subs[i].title)
+                                        );
+                                    }
+                                }
+
+                                return arr;
+                            }());
+                        }
+                    },
+                    {
+                        title: 'Action',
+                        key: 'action',
+                        width: 150,
+                        align: 'center',
+                        render: (h, params) => {
+                            return h('div', [
+                                h('Button', {
+                                    props: {
+                                        type: 'primary',
+                                        size: 'small'
+                                    },
+                                    style: {
+                                        marginRight: '5px'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.show(params.index)
+                                        }
+                                    }
+                                }, 'View'),
+                                h('Button', {
+                                    props: {
+                                        type: 'error',
+                                        size: 'small'
+                                    },
+                                    on: {
+                                        click: () => {
+                                            this.remove(params.index)
+                                        }
+                                    }
+                                }, 'Delete')
+                            ]);
+                        }
+                    }
+                ],
+                data6: [
+                    {
+                        name: 'John Brown',
+                        age: 18,
+                        address: 'New York No. 1 Lake Park',
+                        subs: [
+                            {
+                                title: '子地址_1-1',
+                                key: '子地址_1-1'
+                            }
+                        ],
+                        last_column: '最后一列-1行'
+                    },
+                    {
+                        name: 'Jim Green',
+                        age: 24,
+                        address: 'London No. 1 Lake Park',
+                        subs: [
+                            {
+                                title: '子地址_2-1',
+                                key: '子地址_2-1'
+                            },
+
+                            {
+                                title: '子地址_2-2',
+                                key: '子地址_2-2'
+                            }
+                        ],
+                        last_column: '最后一列-2行'
+                    },
+                    {
+                        name: 'Joe Black',
+                        age: 30,
+                        address: 'Sydney No. 1 Lake Park',
+                        last_column: '最后一列-3行'
+                    },
+                    {
+                        name: 'Jon Snow',
+                        age: 26,
+                        address: 'Ottawa No. 2 Lake Park',
+                        last_column: '最后一列-4行'
+                    }
+                ]
+            }
+        },
+        methods: {
+            show (index) {
+                this.$Modal.info({
+                    title: 'User Info',
+                    content: `Name：${this.data6[index].name}<br/>Age：${this.data6[index].age}<br/>Address：${this.data6[index].address}`
+                })
+            },
+            remove (index) {
+                this.data6.splice(index, 1);
+            },
+            toggleLastColumn () {
+                if (this.toggleLastColumnFlag) {
+                    this.columnsToggle.push(this.columns7.pop());
+                } else {
+                    this.columns7.push(this.columnsToggle.pop());
+                }
+                this.toggleLastColumnFlag = !this.toggleLastColumnFlag;
+            }
+        }
+    });
+</script>
+</body>
+</html>
